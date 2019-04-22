@@ -19,17 +19,17 @@ object EventSimulator {
     val eventTypeIndex = rand.nextInt(Defaults.eventTypes.length)
     val eventType: String = Defaults.eventTypes(eventTypeIndex)
 
-    // from event types, pick a random event key
+    // using event type, pick a random event key
     val eventKeys: List[String] = Defaults.eventTypesToKeys(eventType)
     val eventKeyIndex: Int = rand.nextInt(eventKeys.length)
     val eventKey: String = eventKeys(eventKeyIndex)
 
-    // for event key, pick a random pre-defined event value
+    // for picked event key, choose a random pre-defined event value
     val values: List[Int] = Defaults.eventValues(eventKey)
     val eventValueIndex: Int = rand.nextInt(values.length)
     val eventValue: Int = values(eventValueIndex)
 
-    // return the created event
+    // create an event and return
     ClientEvent(clientId, event_id, System.currentTimeMillis(), eventType, eventKey, eventValue.toString)
 
   }

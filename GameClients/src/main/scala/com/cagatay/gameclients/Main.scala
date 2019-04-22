@@ -35,9 +35,13 @@ object Main extends LazyLogging {
       case Some(vll) => if (vll.isEmpty) Defaults.maxIntervalInseconds else vll.toInt
     }
 
-    if (minIntervalSeconds > maxIntervalSeconds) {
+    if (minIntervalSeconds >= maxIntervalSeconds) {
       throw new Exception("max interval must be greater than min.")
     } else {
+
+      logger.info(s"System has started with $numberOfClients clients, " +
+        s"$minIntervalSeconds seconds minInterval, $maxIntervalSeconds seconds maxInterval")
+
       val httpService: HttpService = new HttpService(system)
 
       for (i <- 1 to numberOfClients) {
