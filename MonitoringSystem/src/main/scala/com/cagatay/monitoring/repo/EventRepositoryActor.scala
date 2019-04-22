@@ -15,6 +15,7 @@ class EventRepositoryActor extends Actor with LazyLogging {
         sender() ! RepoFail("Duplicate event id. Event will not be stored.")
       } else {
         repo += (event.event_id -> event)
+        logger.info(s"Event stored by client ${event.client_id} key ${event.event_key} value ${event.event_value}")
         sender() ! RepoSuccess(event)
       }
 

@@ -1,12 +1,13 @@
 package com.cagatay.gameclients
 
-import akka.actor.ActorSystem
+import akka.actor.{ActorRef, ActorSystem}
 import akka.stream.ActorMaterializer
 import com.cagatay.gameclients.data.Defaults
 import com.cagatay.gameclients.server.HttpService
 import com.cagatay.gameclients.simulation.ClientActor
 import com.typesafe.scalalogging.LazyLogging
 
+import scala.collection.immutable
 import scala.concurrent.ExecutionContext
 
 object Main extends LazyLogging {
@@ -38,17 +39,22 @@ object Main extends LazyLogging {
     if (minIntervalSeconds >= maxIntervalSeconds) {
       throw new Exception("max interval must be greater than min.")
     } else {
-
       logger.info(s"System has started with $numberOfClients clients, " +
         s"$minIntervalSeconds seconds minInterval, $maxIntervalSeconds seconds maxInterval")
 
       val httpService: HttpService = new HttpService(system)
 
-      for (i <- 1 to numberOfClients) {
-        system.actorOf(ClientActor.props(minIntervalSeconds, maxIntervalSeconds, httpService, i), ClientActor.name(i))
-      }
-    }
+      // create client actors
+      val clients: immutable.Seq[ActorRef] = for (i <- 1 to numberOfClients)
+        yield system.actorOf(ClientActor.props(minIntervalSeconds, maxIntervalSeconds, httpService, i), ClientActor.name(i))
 
+      sys.addShutdownHook{
+        clients.foreach{
+          system.stop
+        }
+      }
+
+    }
 
 
   }

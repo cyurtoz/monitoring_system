@@ -66,7 +66,10 @@ class ClientActor(minInterval: Int, maxInterval: Int, httpService: HttpService, 
       // schedule the next event
       // a sendEvent message will be sent to this actor from the scheduler
       context.system.scheduler.scheduleOnce(nextEventTime.seconds, self, simulation.SendEvent(event))
+  }
 
+  override def postStop(): Unit = {
+    logger.info(sentEvents.mkString("\n"))
   }
 }
 
